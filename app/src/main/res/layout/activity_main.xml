@@ -5,5 +5,38 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- Camera Preview -->
+    <androidx.camera.view.PreviewView
+        android:id="@+id/viewFinder"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
+    <!-- Faces detected TextView -->
+    <TextView
+        android:id="@+id/faceCountTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Faces detected: 0"
+        android:layout_gravity="center_horizontal"
+        android:padding="8dp" />
+
+    <!-- Loading Spinner -->
+    <ProgressBar
+        android:id="@+id/loadingSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_gravity="center_horizontal"
+        android:padding="8dp" />
+
+    <!-- Capture Button -->
+    <Button
+        android:id="@+id/captureButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Capture Image"
+        android:layout_gravity="center_horizontal"
+        android:padding="8dp" />
 </LinearLayout>
+

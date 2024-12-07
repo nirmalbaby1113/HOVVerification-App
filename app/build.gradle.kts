@@ -65,6 +65,10 @@ dependencies {
     implementation ("androidx.camera:camera-core:1.4.0")
     implementation ("androidx.camera:camera-view:1.4.0")
     implementation ("androidx.camera:camera-lifecycle:1.4.0")
+    implementation ("androidx.camera:camera-camera2:1.4.0")
+
+    implementation ("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11")
+
 
     // Firebase Authentication
     implementation ("com.google.firebase:firebase-auth:23.1.0")
