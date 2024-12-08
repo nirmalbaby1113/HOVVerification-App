@@ -1,10 +1,15 @@
 package com.nirmal.baby.hovverification.features.hovVerification.view
 
 import android.Manifest
+import android.app.Dialog
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +19,7 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import com.nirmal.baby.hovverification.R
+import com.nirmal.baby.hovverification.database.AppDatabase
 import com.nirmal.baby.hovverification.databinding.ActivityMainBinding
 import com.nirmal.baby.hovverification.features.hovVerification.interactor.HOVInteractor
 import com.nirmal.baby.hovverification.features.hovVerification.presenter.HOVPresenter
@@ -32,6 +38,7 @@ class HOVActivity : AppCompatActivity(), HOVViewInterface {
     private lateinit var imageCapture: ImageCapture
     private lateinit var outputDirectory: File
     private lateinit var cameraExecutor: ExecutorService
+    private lateinit var dialog: Dialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +48,8 @@ class HOVActivity : AppCompatActivity(), HOVViewInterface {
 
         // Initialize VIPER components
         val apiService = ApiService.create()
-        val interactor = HOVInteractor(apiService)
+        val database = AppDatabase.getDatabase(this)
+        val interactor = HOVInteractor(apiService,database)
         val router = HOVRouter(this)
         presenter = HOVPresenter(this, interactor, router)
 
@@ -59,6 +67,30 @@ class HOVActivity : AppCompatActivity(), HOVViewInterface {
         binding.captureButton.setOnClickListener {
             captureImage()
         }
+
+        // Initialize the custom dialog
+        initializeDialog()
+    }
+
+    private fun initializeDialog() {
+        dialog = Dialog(this)
+        dialog.setContentView(R.layout.dialog_loading_face_count)
+
+        // Match parent for width to ensure full size
+        dialog.window?.apply {
+            setBackgroundDrawableResource(android.R.color.transparent) // Removes default dialog background
+            setLayout(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        }
+        dialog.setCancelable(false) // Prevent dismissal by tapping outside
+
+        // Handle "Verify Again" button
+        dialog.findViewById<Button>(R.id.verifyAgainButton)?.setOnClickListener {
+            dialog.dismiss() // Close the dialog
+        }
+
     }
 
     private val requestPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
@@ -111,7 +143,7 @@ class HOVActivity : AppCompatActivity(), HOVViewInterface {
             ContextCompat.getMainExecutor(this),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                    Toast.makeText(this@HOVActivity, "Image Saved: ${imageFile.absolutePath}", Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(this@HOVActivity, "Image Saved: ${imageFile.absolutePath}", Toast.LENGTH_SHORT).show()
                     processCapturedImage(imageFile) // Pass the image file for further processing
                 }
 
@@ -139,16 +171,41 @@ class HOVActivity : AppCompatActivity(), HOVViewInterface {
         cameraExecutor.shutdown()
     }
 
-    override fun showFaceCount(count: Int) {
+    /*override fun showFaceCount(count: Int) {
         binding.faceCountTextView.text = "Faces detected: $count"
+    }*/
+
+    override fun showFaceCount(count: Int) {
+        if (!dialog.isShowing) {
+            dialog.show()
+        }
+        Log.d("DialogDebug", "showFaceCount called with count: $count")
+        // Update the dialog to show the face count
+        val faceCountText = dialog.findViewById<TextView>(R.id.faceCountText)
+        faceCountText.text = "Faces detected: $count"
+        faceCountText.visibility = View.VISIBLE
+
+        // Hide the loading spinner
+        dialog.findViewById<ProgressBar>(R.id.loadingSpinner).visibility = View.GONE
     }
 
+
     override fun showLoading() {
-        binding.loadingSpinner.visibility = View.VISIBLE
+        //binding.loadingSpinner.visibility = View.VISIBLE
+        dialog.findViewById<ProgressBar>(R.id.loadingSpinner).visibility = View.VISIBLE
+        dialog.findViewById<TextView>(R.id.faceCountText).visibility = View.GONE
+        dialog.show()
+
+        if (!dialog.isShowing) {
+            dialog.show()
+        }
     }
 
     override fun hideLoading() {
-        binding.loadingSpinner.visibility = View.GONE
+        //binding.loadingSpinner.visibility = View.GONE
+        if (dialog.isShowing) {
+            dialog.dismiss()
+        }
     }
 
     override fun showError(message: String) {

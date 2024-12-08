@@ -5,7 +5,6 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -16,6 +15,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HOVVerification"
         tools:targetApi="31">
+        <activity
+            android:name=".HomeActivity"
+            android:exported="false" >
+
+        </activity>
         <activity
             android:name=".features.hovVerification.view.HOVActivity"
             android:exported="true">

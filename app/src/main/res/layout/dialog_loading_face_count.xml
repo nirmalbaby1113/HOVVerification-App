@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:layout_margin="10dp"
+    android:orientation="vertical"
+    android:background="@drawable/dialog_background"
+    android:gravity="center">
+
+    <!-- Loading Spinner -->
+    <ProgressBar
+        android:id="@+id/loadingSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible" />
+
+    <!-- Face Detected Count -->
+    <TextView
+        android:id="@+id/faceCountText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Detecting faces..."
+        android:textSize="16sp"
+        android:paddingTop="16dp"
+        android:gravity="center"
+        android:visibility="gone" />
+
+    <!-- Buttons Section -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingTop="16dp">
+
+        <!-- Verify Again Button -->
+        <Button
+            android:id="@+id/verifyAgainButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Verify Again"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1" />
+
+        <!-- Back to Dashboard Button -->
+        <Button
+            android:id="@+id/backToDashboardButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Dashboard"
+            android:layout_weight="1" />
+    </LinearLayout>
+</LinearLayout>

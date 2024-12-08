@@ -23,14 +23,14 @@ class HOVPresenter(
                 val response = interactor.fetchFaceData(imageFile)
                 withContext(Dispatchers.Main) {
                     view.showFaceCount(response.face_num)
-                    view.hideLoading()
+                    //view.hideLoading()
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     val detailedError = e.message ?: "An unknown error occurred"
                     Log.e("HOVPresenter", "Error: $detailedError")
                     view.showError(detailedError) // Show detailed error
-                    view.hideLoading()
+                    //view.hideLoading()
                 }
             }
         }

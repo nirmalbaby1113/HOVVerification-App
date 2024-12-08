@@ -1,6 +1,8 @@
 package com.nirmal.baby.hovverification.features.hovVerification.interactor
 
 
+import com.nirmal.baby.hovverification.database.AppDatabase
+import com.nirmal.baby.hovverification.database.FaceDataEntity
 import com.nirmal.baby.hovverification.features.hovVerification.entity.FaceResponse
 import com.nirmal.baby.hovverification.network.ApiService
 import okhttp3.MediaType.Companion.toMediaType
@@ -11,7 +13,7 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 
-class HOVInteractor(private val apiService: ApiService) {
+class HOVInteractor(private val apiService: ApiService, private val database: AppDatabase) {
     suspend fun fetchFaceData(imageFile: File): FaceResponse {
         // Convert text parameters to RequestBody with text/plain media type
         val params = mapOf(
@@ -27,13 +29,25 @@ class HOVInteractor(private val apiService: ApiService) {
         )
 
         return try {
-            apiService.detectFaces(
-                params = params,
-                imageFile = imagePart
-            )
+            val response = apiService.detectFaces(params = params, imageFile = imagePart)
+
+            // Save the response locally
+            saveFaceDataLocally(response)
+
+            // Return the response to the caller
+            return response
         } catch (e: HttpException) {
             val errorBody = e.response()?.errorBody()?.string()
             throw Exception("HTTP ${e.code()} - ${e.message()} - ${errorBody ?: "No error details"}")
         }
+    }
+
+    private suspend fun saveFaceDataLocally(response: FaceResponse) {
+        val faceData = FaceDataEntity(
+            requestId = response.request_id,
+            faceCount = response.face_num,
+            timestamp = System.currentTimeMillis()
+        )
+        database.faceDataDao().insertFaceData(faceData)
     }
 }
