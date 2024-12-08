@@ -3,22 +3,39 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/background">
 
     <!-- Camera Preview -->
-    <androidx.camera.view.PreviewView
-        android:id="@+id/viewFinder"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1">
+
+        <androidx.camera.view.PreviewView
+            android:id="@+id/viewFinder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <!-- ImageView for captured image -->
+        <ImageView
+            android:id="@+id/capturedImageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:scaleType="fitCenter" />
+    </FrameLayout>
 
     <!-- Capture Button -->
     <Button
         android:id="@+id/captureButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Capture Image"
+        android:layout_margin="5dp"
+        android:text="Capture"
+        android:background="@drawable/rounded_button"
         android:layout_gravity="center_horizontal"
         android:padding="8dp" />
 </LinearLayout>
+
 

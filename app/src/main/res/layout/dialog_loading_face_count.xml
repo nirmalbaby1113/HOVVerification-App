@@ -40,6 +40,7 @@
             android:id="@+id/verifyAgainButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:background="@drawable/rounded_button"
             android:text="Verify Again"
             android:layout_marginEnd="8dp"
             android:layout_weight="1" />
@@ -49,6 +50,7 @@
             android:id="@+id/backToDashboardButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:background="@drawable/rounded_button"
             android:text="Dashboard"
             android:layout_weight="1" />
     </LinearLayout>

@@ -3,6 +3,7 @@ package com.nirmal.baby.hovverification.features.hovVerification.view
 import android.Manifest
 import android.app.Dialog
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -21,6 +22,7 @@ import androidx.core.content.ContextCompat
 import com.nirmal.baby.hovverification.R
 import com.nirmal.baby.hovverification.database.AppDatabase
 import com.nirmal.baby.hovverification.databinding.ActivityMainBinding
+import com.nirmal.baby.hovverification.features.home.router.HomeRouter
 import com.nirmal.baby.hovverification.features.hovVerification.interactor.HOVInteractor
 import com.nirmal.baby.hovverification.features.hovVerification.presenter.HOVPresenter
 import com.nirmal.baby.hovverification.features.hovVerification.router.HOVRouter
@@ -65,14 +67,23 @@ class HOVActivity : AppCompatActivity(), HOVViewInterface {
 
         // Button click listener for image capture
         binding.captureButton.setOnClickListener {
-            captureImage()
+            if (binding.capturedImageView.visibility == View.VISIBLE) {
+                // Reset to camera preview mode
+                binding.capturedImageView.visibility = View.GONE
+                binding.viewFinder.visibility = View.VISIBLE
+                binding.captureButton.text = "Capture" // Reset button text
+                startCamera() // Restart the camera
+            } else {
+                captureImage() // Capture an image
+            }
         }
 
+
         // Initialize the custom dialog
-        initializeDialog()
+        initializeDialog(router)
     }
 
-    private fun initializeDialog() {
+    private fun initializeDialog(router: HOVRouter) {
         dialog = Dialog(this)
         dialog.setContentView(R.layout.dialog_loading_face_count)
 
@@ -89,6 +100,15 @@ class HOVActivity : AppCompatActivity(), HOVViewInterface {
         // Handle "Verify Again" button
         dialog.findViewById<Button>(R.id.verifyAgainButton)?.setOnClickListener {
             dialog.dismiss() // Close the dialog
+            binding.capturedImageView.visibility = View.GONE // Reset ImageView
+            binding.viewFinder.visibility = View.VISIBLE // Show camera preview
+            binding.captureButton.text = "Capture" // Reset button text
+            startCamera() // Restart the camera
+        }
+
+
+        dialog.findViewById<Button>(R.id.backToDashboardButton)?.setOnClickListener {
+            router.navigateToHome()
         }
 
     }
@@ -157,7 +177,18 @@ class HOVActivity : AppCompatActivity(), HOVViewInterface {
     private fun processCapturedImage(imageFile: File) {
         // Pass the captured image to the presenter for API processing
         presenter.onImageCaptured(imageFile)
+
+        // Display the captured image in the ImageView
+        binding.capturedImageView.apply {
+            visibility = View.VISIBLE
+            setImageURI(Uri.fromFile(imageFile))
+        }
+
+        // Hide the camera preview
+        binding.viewFinder.visibility = View.GONE
+        binding.captureButton.text = "Verify Again" // Change button text
     }
+
 
     private fun getOutputDirectory(): File {
         val mediaDir = externalMediaDirs.firstOrNull()?.let {

@@ -43,7 +43,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:text="Passengers: 3"
-        android:textSize="18sp"
+        android:textSize="14sp"
         android:textStyle="bold"
         android:padding="8dp"
         android:textColor="@color/black" />
